@@ -21,7 +21,7 @@ namespace RecolorWorkPriorities
             RecolorWorkPrioritiesMod.VanillaPriority1,
             RecolorWorkPrioritiesMod.VanillaPriority2,
             RecolorWorkPrioritiesMod.VanillaPriority3,
-            new Color(0.74f, 0.74f, 0.74f), // vanilla priority 4 grey
+            RecolorWorkPrioritiesMod.VanillaPriority4,
             Color.red,
             Color.yellow,
             Color.white,

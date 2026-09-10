@@ -19,11 +19,11 @@ ladder changes:
 | 1 | green | **cyan** |
 | 2 | light yellow | green (vanilla 1) |
 | 3 | tan | light yellow (vanilla 2) |
-| 4 | grey | grey (unchanged) |
+| 4 | grey | grey (default, configurable) |
 | inactive | grey | grey (unchanged) |
 
-All three shifted colors are configurable, so the ladder can be tuned to any
-scheme - the vanilla-to-cyan shift is just the default.
+All four colors are configurable, so the ladder can be tuned to any scheme -
+the vanilla-to-cyan shift is just the default.
 
 ## The warning border
 
@@ -42,9 +42,11 @@ tier up from the shifted ladder).
 
 - **Enabled** - master switch. While off, the work tab keeps its vanilla
   colors and vanilla skill-2 border; changes apply immediately on re-enable.
-- **Priority 1/2/3 colors** - click a swatch to open the vanilla color picker
-  (full RGBA/HSV, preset palette includes the vanilla tier colors).
-- **Reset colors to defaults** - back to cyan / green / yellow.
+- **Priority 1-4 colors** - click a swatch to open the vanilla color picker
+  (full RGBA/HSV, preset palette includes the vanilla tier colors). Priority
+  4 defaults to vanilla grey, so the lowest tier is unchanged unless you pick
+  a color.
+- **Reset colors to defaults** - back to cyan / green / yellow / grey.
 - **Low-skill warning border** - the skill threshold described above.
 - **Debug logging** - Off / Basic (loading, applied patches, transpiler
   outcomes) / Verbose (Work Tab compat details, reference counts).
@@ -55,7 +57,9 @@ tier up from the shifted ladder).
 - **Fluffy's Work Tab** - detected automatically. That mod ships its own
   private color function (a green-white-grey gradient), so the mod replicates
   the gradient and shifts it the same way: 2 wears 1's gradient color, 3 wears
-  2's, 1 wears the configured cyan; tiers 4+ stay vanilla. Its warning border
+  2's, 1 wears the configured cyan. Its tier 4 is a gradient endpoint rather
+  than vanilla grey, so it keeps that look until you customize the fourth
+  color - then the setting applies there too. Its warning border
   is drawn by the (patched) vanilla background helper, so it follows the same
   threshold. Only its work *type* tooltip is tiered up; its detailed
   workgiver tooltips never colored their warning lines.
@@ -72,7 +76,7 @@ For modders and the curious - all patches are applied individually with
 graceful degradation: if a game update renames a target, that one behavior
 stays vanilla and a warning is logged, never a cascade of errors.
 
-- `WidgetsWork.ColorOfPriority(int)` - postfix remaps 1-3 to the configured
+- `WidgetsWork.ColorOfPriority(int)` - postfix remaps 1-4 to the configured
   colors. Called per work box per frame, so the patch is allocation-free and
   logging-free; the master switch is a single bool read.
 - `WidgetsWork.DrawWorkBoxBackground` (private) - transpiler replaces the
@@ -84,10 +88,11 @@ stays vanilla and a warning is logged, never a cascade of errors.
   edit, plus bumping the constant `2` passed to `ColorOfPriority` for the two
   warning lines up to `3`, keeping their pre-shift color.
 - `WorkTab.DrawUtilities` (Fluffy's, conditional) - postfix on its private
-  `ColorOfPriority` shifts tiers 1-3 using a replica of its gradient; its
-  `maxPriority` setting is read via reflection once per frame (not per cell).
-  Its work type tooltip gets the same two transpilers. Missing internals at
-  patch time or runtime degrade to "Work Tab stays unpatched".
+  `ColorOfPriority` shifts tiers 1-3 using a replica of its gradient, and
+  applies the fourth color once it is customized; its `maxPriority` setting
+  is read via reflection once per frame (not per cell). Its work type tooltip
+  gets the same two transpilers. Missing internals at patch time or runtime
+  degrade to "Work Tab stays unpatched".
 - Settings live in `RecolorWorkPrioritiesSettings`; the threshold is mirrored
   into a static field the patched IL reads (`SyncStatics`), which is what
   makes slider changes immediate.

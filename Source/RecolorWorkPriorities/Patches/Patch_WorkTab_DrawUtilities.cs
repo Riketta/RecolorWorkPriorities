@@ -13,7 +13,9 @@ namespace RecolorWorkPriorities
     /// setting), so the vanilla color patch cannot reach it. When the mod is
     /// present, its gradient is replicated for the tier shift: 2 wears 1's
     /// gradient color, 3 wears 2's, and 1 wears the configured cyan, while
-    /// tiers 4+ keep the gradient untouched. Its work type tooltip is tiered
+    /// tiers 4+ keep the gradient untouched - except tier 4 once the player
+    /// customizes the fourth color, which then applies there as well. Its
+    /// work type tooltip is tiered
     /// up with the shared transpilers so border and text stay in sync (the
     /// tab's boxes are drawn by the already-patched vanilla background
     /// helper). Everything degrades to "Work Tab stays unpatched" if its
@@ -92,6 +94,10 @@ namespace RecolorWorkPriorities
             else if (priority == 2 || priority == 3)
             {
                 __result = GradientColorOf(priority - 1);
+            }
+            else if (priority == 4 && RecolorWorkPrioritiesMod.Priority4Customized)
+            {
+                __result = settings.priority4Color;
             }
         }
 

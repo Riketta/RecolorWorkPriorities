@@ -6,7 +6,8 @@ namespace RecolorWorkPriorities
 {
     /// <summary>Shifts the priority color ladder one tier up: the number 2
     /// wears 1's color, 3 wears 2's color, and 1 wears the configured cyan.
-    /// Priority 4 and the inactive grey keep their vanilla colors. Vanilla
+    /// Priority 4 is configurable too and defaults to its vanilla grey; the
+    /// inactive grey always stays vanilla. Vanilla
     /// routes every priority number it draws (work tab cells, tooltips)
     /// through this one function, so a single postfix covers them all;
     /// Fluffy's Work Tab ships an independent color function and is handled
@@ -27,6 +28,7 @@ namespace RecolorWorkPriorities
                 case 1: __result = settings.priority1Color; break;
                 case 2: __result = settings.priority2Color; break;
                 case 3: __result = settings.priority3Color; break;
+                case 4: __result = settings.priority4Color; break;
             }
         }
     }

@@ -12,10 +12,13 @@
   <RecolorWorkPriorities.Priority2Color.Tip>The color of priority 2 work boxes. Default: vanilla's priority 1 green, moved one tier down. Click the swatch to pick a color.</RecolorWorkPriorities.Priority2Color.Tip>
 
   <RecolorWorkPriorities.Priority3Color>Priority 3 color</RecolorWorkPriorities.Priority3Color>
-  <RecolorWorkPriorities.Priority3Color.Tip>The color of priority 3 work boxes. Default: vanilla's priority 2 light yellow, moved one tier down. Priority 4 keeps its vanilla grey. Click the swatch to pick a color.</RecolorWorkPriorities.Priority3Color.Tip>
+  <RecolorWorkPriorities.Priority3Color.Tip>The color of priority 3 work boxes. Default: vanilla's priority 2 light yellow, moved one tier down. Priority 4 is configurable too (default vanilla grey). Click the swatch to pick a color.</RecolorWorkPriorities.Priority3Color.Tip>
+
+  <RecolorWorkPriorities.Priority4Color>Priority 4 color</RecolorWorkPriorities.Priority4Color>
+  <RecolorWorkPriorities.Priority4Color.Tip>The color of priority 4 work boxes. Default: vanilla grey, so the lowest tier is unchanged unless you pick a color. In Fluffy's Work Tab the vanilla-style grey is only replaced once you customize this color. Click the swatch to pick a color.</RecolorWorkPriorities.Priority4Color.Tip>
 
   <RecolorWorkPriorities.ResetColors>Reset colors to defaults</RecolorWorkPriorities.ResetColors>
-  <RecolorWorkPriorities.ResetColors.Tip>Priority 1 cyan, priority 2 vanilla-green, priority 3 vanilla-yellow.</RecolorWorkPriorities.ResetColors.Tip>
+  <RecolorWorkPriorities.ResetColors.Tip>Priority 1 cyan, priority 2 vanilla-green, priority 3 vanilla-yellow, priority 4 vanilla-grey.</RecolorWorkPriorities.ResetColors.Tip>
 
   <RecolorWorkPriorities.WarningThreshold>Low-skill warning border: skill {0} and below</RecolorWorkPriorities.WarningThreshold>
   <RecolorWorkPriorities.WarningThreshold.Tip>Work boxes for active work the pawn is bad at get a warning border and a tooltip warning. Vanilla shows them at skill 2 and below; this default of 3 moves the border one tier up. Set it back to 2 for vanilla behavior, or to 0 to warn only on skill 0. Applies immediately.</RecolorWorkPriorities.WarningThreshold.Tip>
@@ -23,5 +26,5 @@
   <RecolorWorkPriorities.DebugLevel>Debug logging: {0}</RecolorWorkPriorities.DebugLevel>
   <RecolorWorkPriorities.DebugLevel.Tip>Cycles Off / Basic / Verbose.\n\nBasic logs mod loading, every applied patch and transpiler outcome. Verbose additionally logs Work Tab compatibility details like per-frame max-priority reads and warning color reference counts.</RecolorWorkPriorities.DebugLevel.Tip>
 
-  <RecolorWorkPriorities.BehaviorNote>Priority colors are shifted one tier up (2 wears 1's color, 3 wears 2's, 1 is cyan) in the vanilla work tab and in Fluffy's Work Tab when present. The low-skill warning border follows the configured skill threshold in both tabs. If the game or Work Tab changes, the affected piece stays vanilla instead of erroring.</RecolorWorkPriorities.BehaviorNote>
+  <RecolorWorkPriorities.BehaviorNote>Priority colors are shifted one tier up (2 wears 1's color, 3 wears 2's, 1 is cyan; 4 stays vanilla grey by default) in the vanilla work tab and in Fluffy's Work Tab when present. The low-skill warning border follows the configured skill threshold in both tabs. If the game or Work Tab changes, the affected piece stays vanilla instead of erroring.</RecolorWorkPriorities.BehaviorNote>
 </LanguageData>

@@ -8,7 +8,7 @@ a new cyan. The low-skill warning border appears from skill 3 and below
 ## What it does
 
 - Recolors manual work priority numbers: 1 cyan, 2 green, 3 light yellow,
-  4 unchanged grey - all three colors configurable in mod settings.
+  4 grey by default - all four colors configurable in mod settings.
 - Moves the low-skill warning border (and its tooltip warning) one tier up,
   with a configurable skill threshold.
 - Works with the vanilla work tab and Fluffy's Work Tab (detected

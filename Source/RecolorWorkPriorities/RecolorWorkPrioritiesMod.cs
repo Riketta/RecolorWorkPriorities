@@ -32,6 +32,11 @@ namespace RecolorWorkPriorities
         /// yellow (1, 0.9, 0.5) - the color moved one tier down.</summary>
         public Color priority3Color = new Color(1f, 0.9f, 0.5f);
 
+        /// <summary>Priority 4 color. Default is vanilla's priority 4 grey
+        /// (0.74, 0.74, 0.74), so the lowest tier is unchanged unless the
+        /// player picks a custom color.</summary>
+        public Color priority4Color = RecolorWorkPrioritiesMod.VanillaPriority4;
+
         /// <summary>Skill below which the low-skill warning border (and the
         /// matching tooltip line) is shown for active work. Vanilla compares
         /// against 2; the default 3 moves the border one tier up.</summary>
@@ -46,6 +51,7 @@ namespace RecolorWorkPriorities
             Scribe_Values.Look(ref priority1Color, "priority1Color", new Color(0f, 1f, 1f));
             Scribe_Values.Look(ref priority2Color, "priority2Color", new Color(0f, 1f, 0f));
             Scribe_Values.Look(ref priority3Color, "priority3Color", new Color(1f, 0.9f, 0.5f));
+            Scribe_Values.Look(ref priority4Color, "priority4Color", RecolorWorkPrioritiesMod.VanillaPriority4);
             Scribe_Values.Look(ref warningSkillThreshold, "warningSkillThreshold", 3f);
             Scribe_Values.Look(ref debugLevel, "debugLevel", (int)DebugLogLevel.Off);
         }
@@ -73,6 +79,14 @@ namespace RecolorWorkPriorities
         public static readonly Color VanillaPriority1 = new Color(0f, 1f, 0f);
         public static readonly Color VanillaPriority2 = new Color(1f, 0.9f, 0.5f);
         public static readonly Color VanillaPriority3 = new Color(0.8f, 0.7f, 0.5f);
+        public static readonly Color VanillaPriority4 = new Color(0.74f, 0.74f, 0.74f);
+
+        /// <summary>True when the priority 4 color was changed from its
+        /// vanilla default. Work Tab's own tier-4 look is a gradient endpoint
+        /// rather than vanilla grey, so it is only overridden when the player
+        /// actually picks a custom fourth color.</summary>
+        public static bool Priority4Customized =>
+            Settings != null && !(Settings.priority4Color == VanillaPriority4);
 
         public RecolorWorkPrioritiesMod(ModContentPack content) : base(content)
         {
@@ -137,6 +151,9 @@ namespace RecolorWorkPriorities
             ColorRow(list, "RecolorWorkPriorities.Priority3Color".Translate(),
                 "RecolorWorkPriorities.Priority3Color.Tip".Translate(),
                 () => Settings.priority3Color, c => Settings.priority3Color = c);
+            ColorRow(list, "RecolorWorkPriorities.Priority4Color".Translate(),
+                "RecolorWorkPriorities.Priority4Color.Tip".Translate(),
+                () => Settings.priority4Color, c => Settings.priority4Color = c);
             list.Gap(4f);
 
             Rect resetRect = list.GetRect(30f);
@@ -145,6 +162,7 @@ namespace RecolorWorkPriorities
                 Settings.priority1Color = new Color(0f, 1f, 1f);
                 Settings.priority2Color = VanillaPriority1;
                 Settings.priority3Color = VanillaPriority2;
+                Settings.priority4Color = VanillaPriority4;
             }
             TooltipHandler.TipRegion(resetRect, "RecolorWorkPriorities.ResetColors.Tip".Translate());
             list.Gap(8f);
