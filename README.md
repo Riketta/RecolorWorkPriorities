@@ -29,14 +29,10 @@ the vanilla-to-cyan shift is just the default.
 
 Vanilla draws a warning border around work boxes where the pawn is actively
 assigned work but has an average relevant skill of **2 or below**, and adds a
-"very bad skill" line to the priority tooltip. This mod moves that check one
-tier up: the border appears from **skill 3 and below** by default, so
-mediocre-but-not-hopeful assignments are flagged too.
-
-The threshold is a slider (0-20, default 3); set it back to 2 for vanilla
-behavior. The tooltip warning follows the border's threshold, and its text
-keeps the yellow look it had before the color shift (it reads the color one
-tier up from the shifted ladder).
+"very bad skill" line to the priority tooltip. This mod adds the same border
+and line for the next band up: skill 3 and below by default (the threshold
+is a slider, 0-20). Warning text keeps vanilla's convention of wearing
+priority 2's color - under the shifted color ladder that is simply green.
 
 ## Priority labels
 
@@ -91,38 +87,46 @@ priority tooltip matches ("Priority A", "Priority 1", ...).
 
 ## Technical notes
 
-For modders and the curious - all patches are applied individually with
-graceful degradation: if a game update renames a target, that one behavior
-stays vanilla and a warning is logged, never a cascade of errors.
+For modders and the curious - every patch is a plain Harmony prefix/postfix
+with graceful degradation, except one targeted IL edit (the drawn number
+swap) that has no postfix equivalent which would not double the per-cell
+drawing cost or copy vanilla rendering. If a game update renames a target,
+that one behavior stays vanilla and a warning is logged, never a cascade of
+errors.
 
 - `WidgetsWork.ColorOfPriority(int)` - postfix remaps 1-4 to the configured
   colors. Called per work box per frame, so the patch is allocation-free and
   logging-free; the master switch is a single bool read.
-- `WidgetsWork.DrawWorkBoxBackground` (private) - transpiler replaces the
-  single `skill <= 2f` constant with a load of the settings-driven threshold
-  static field, so slider changes apply live. Fluffy's Work Tab invokes this
-  method via reflection, which is why one transpiler covers both tabs. A
-  match count of anything but exactly 1 aborts the edit and logs.
-- `WidgetsWork.DrawWorkBoxFor` - transpiler replaces the drawn priority's
-  `ToStringCached` call with `DisplayLabelOf`, so cells read TopLabel / 1 /
-  2 / 3 while real values stay 0-4. The call is allocation-free (literals or
-  vanilla's cached ints); the top label is read from a static mirror synced
-  by `SyncStatics`, never re-trimmed per cell.
-- `WidgetsWork.TipForPawnWorker(Pawn, WorkTypeDef, bool)` - same threshold
-  edit, plus bumping the constant `2` passed to `ColorOfPriority` for the two
-  warning lines up to `3`, keeping their pre-shift color, plus rewriting the
-  `("Priority" + n).Translate()` block into `PriorityTip(n)` so tooltips use
-  the same shifted glyphs as the cells.
+- `WidgetsWork.DrawWorkBoxFor` - the one transpiler: replaces the drawn
+  priority's `ToStringCached` call with `DisplayLabelOf`, so cells read
+  TopLabel / 1 / 2 / 3 while real values stay 0-4. A named-call swap with an
+  occurrence-count check - any game change falls back to vanilla numbers
+  with a logged warning. The top label is read from a static mirror synced
+  by `SyncStatics`, never re-trimmed per cell, and the function returns
+  literals or vanilla's cached ints (allocation-free hot path).
+- `WidgetsWork.DrawWorkBoxBackground` (private) - plain postfix: draws the
+  vanilla warning overlay texture for the 2..threshold skill band, exactly
+  the way vanilla draws it for its own band. Additive only - if vanilla
+  reworks its condition the worst case is a cosmetically off extra border.
+  Fluffy's Work Tab invokes this method via reflection, which is why one
+  postfix covers both tabs.
+- `WidgetsWork.TipForPawnWorker(Pawn, WorkTypeDef, bool)` - one transpiler
+  rewrites the `("Priority" + n).Translate()` block so tooltips use the same
+  shifted glyphs as the cells in every language; the block shape (constant,
+  int load, box, Concat, cast, Translate) is validated and falls back to
+  vanilla text on mismatch. Warning lines are left vanilla - they keep the
+  tier-2 color convention.
 - `WorkTab.DrawUtilities` (Fluffy's, conditional) - postfix on its private
   `ColorOfPriority` shifts tiers 1-3 using a replica of its gradient, and
   applies the fourth color once it is customized; its `maxPriority` setting
-  is read via reflection once per frame (not per cell). Its cells are
-  relabelled through its `DrawPriority`; its work type tooltip
-  gets the same two transpilers. Missing internals at patch time or runtime
-  degrade to "Work Tab stays unpatched".
-- Settings live in `RecolorWorkPrioritiesSettings`; the threshold is mirrored
-  into a static field the patched IL reads (`SyncStatics`), which is what
-  makes slider changes immediate.
+  is read via reflection once per frame (not per cell). A postfix appends
+  the extended warning line to its work type tooltip (uncolored, like its
+  own); its cells are relabelled through its `DrawPriority` via the shared
+  transpiler. Missing internals at patch time or runtime degrade to
+  "Work Tab stays unpatched".
+- Settings live in `RecolorWorkPrioritiesSettings`; the warning threshold
+  and the top label are mirrored into static fields (`SyncStatics`) so
+  setting changes apply to the open work tab immediately.
 
 ## Build from source
 

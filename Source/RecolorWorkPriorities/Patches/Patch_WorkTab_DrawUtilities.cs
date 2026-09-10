@@ -8,18 +8,14 @@ using Verse;
 
 namespace RecolorWorkPriorities
 {
-    /// <summary>Fluffy's Work Tab ships its own private priority color
-    /// function (a green-white-grey gradient over its "max priority"
-    /// setting), so the vanilla color patch cannot reach it. When the mod is
-    /// present, its gradient is replicated for the tier shift: 2 wears 1's
-    /// gradient color, 3 wears 2's, and 1 wears the configured cyan, while
-    /// tiers 4+ keep the gradient untouched - except tier 4 once the player
-    /// customizes the fourth color, which then applies there as well. Its
-    /// work type tooltip is tiered
-    /// up with the shared transpilers so border and text stay in sync (the
-    /// tab's boxes are drawn by the already-patched vanilla background
-    /// helper). Everything degrades to "Work Tab stays unpatched" if its
-    /// internals ever change.</summary>
+    /// <summary>Fluffy's Work Tab compatibility, postfix-first: its priority
+    /// colors come from a private green-white-grey gradient function (a
+    /// postfix shifts tiers 1-3 through a replica of that gradient and
+    /// applies tier 4 once customized), its work type tooltip gains the same
+    /// extended low-skill warning line as the vanilla tooltip (uncolored,
+    /// matching its own style), and its drawn numbers are relabelled through
+    /// the one shared ToStringCached transpiler. Everything degrades to
+    /// "Work Tab stays unpatched" if its internals ever change.</summary>
     internal static class Patch_WorkTab_DrawUtilities
     {
         private const string DrawUtilitiesTypeName = "WorkTab.DrawUtilities";
@@ -60,7 +56,7 @@ namespace RecolorWorkPriorities
                 harmony.Patch(colorOfPriorityMethod,
                     postfix: new HarmonyMethod(typeof(Patch_WorkTab_DrawUtilities), nameof(ColorOfPriorityPostfix)));
                 harmony.Patch(tipForWorkType,
-                    transpiler: new HarmonyMethod(typeof(Patch_WorkTab_DrawUtilities), nameof(WorkTypeTipTranspiler)));
+                    postfix: new HarmonyMethod(typeof(Patch_WorkTab_DrawUtilities), nameof(WorkTypeTipPostfix)));
                 DebugLog.Message("Fluffy's Work Tab detected - shifted its priority colors and warning threshold as well.");
                 if (drawPriority != null)
                 {
@@ -79,18 +75,26 @@ namespace RecolorWorkPriorities
             }
         }
 
-        private static IEnumerable<CodeInstruction> WorkTypeTipTranspiler(IEnumerable<CodeInstruction> instructions)
+        private static void WorkTypeTipPostfix(Pawn pawn, WorkTypeDef worktype, ref string __result)
         {
-            instructions = WarningThresholdTranspiler.ReplaceSkillThreshold(
-                instructions, "WorkTab.DrawUtilities.TipForPawnWorker");
-            return WarningThresholdTranspiler.BumpColorOfPriorityTwoToThree(
-                instructions, colorOfPriorityMethod, "WorkTab.DrawUtilities.TipForPawnWorker");
+            if (!RecolorWorkPrioritiesMod.Active
+                || RecolorWorkPrioritiesMod.WarningSkillThreshold <= 2f
+                || worktype.relevantSkills.Count == 0
+                || pawn.workSettings == null)
+            {
+                return;
+            }
+            float skill = pawn.skills.AverageOfRelevantSkillsFor(worktype);
+            if (skill <= 2f
+                || skill > RecolorWorkPrioritiesMod.WarningSkillThreshold
+                || !pawn.workSettings.WorkIsActive(worktype))
+            {
+                return;
+            }
+            // Work Tab appends this line uncolored - match its own style.
+            __result += "\n\n" + "SelectedWorkTypeWithVeryBadSkill".Translate();
         }
 
-        /// <summary>Work Tab's tooltips spell priorities out in words ("Top",
-        /// "High", ...), but its cells draw raw numbers through
-        /// DrawPriority - rerouting that through DisplayLabelOf keeps its
-        /// detailed columns on the shifted ladder too.</summary>
         private static IEnumerable<CodeInstruction> DrawPriorityTranspiler(IEnumerable<CodeInstruction> instructions)
         {
             return PriorityLabelTranspiler.ReplaceToStringWithLabel(

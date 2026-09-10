@@ -82,15 +82,16 @@ namespace RecolorWorkPriorities
         public static bool Active => Settings?.enabled ?? true;
 
         /// <summary>Live mirror of Settings.warningSkillThreshold for the
-        /// transpiled checks: the patched IL loads this static field, so
-        /// slider changes apply to the work tab immediately, without a
-        /// restart. Kept clamped to sane skill values.</summary>
+        /// warning-border postfix: read on every drawn work box, so slider
+        /// changes apply to the work tab immediately, without a restart.
+        /// Kept clamped to sane skill values.</summary>
         public static float WarningSkillThreshold = 3f;
 
-        /// <summary>Live mirror of Settings.topLabel for the transpiled cell
-        /// drawing: DisplayLabelOf reads this cached, sanitized string instead
-        /// of trimming settings text on every drawn box. Updated by
-        /// SyncStatics; never empty (falls back to "A").</summary>
+        /// <summary>Live mirror of Settings.topLabel for the relabelled cell
+        /// drawing: DisplayLabelOf (called from the patched DrawWorkBoxFor)
+        /// reads this cached, sanitized string instead of trimming settings
+        /// text on every drawn box. Updated by SyncStatics; never empty
+        /// (falls back to "A").</summary>
         public static string TopLabel = "A";
 
         /// <summary>Vanilla 1.6 priority colors, kept for the settings reset
