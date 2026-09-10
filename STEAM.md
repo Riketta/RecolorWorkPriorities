@@ -6,7 +6,9 @@ plain-text description).
 
 ```
 [h3]Recolor Work Priorities[/h3]
-Moves the work tab's priority color ladder one tier up: priority 2 wears priority 1's green, priority 3 wears priority 2's yellow, and top priority gets a new cyan that stands out from both at a glance. Priority 4 stays vanilla grey by default. In practice: ideal if you want tier 2 as your everyday default and tier 1 reserved for extreme urgencies - your main workforce keeps the familiar green of the old top tier, so there is nothing to re-learn.
+Moves the work tab's priority color ladder one tier up: priority 2 wears priority 1's green, priority 3 wears priority 2's yellow, and top priority gets a new cyan that stands out from both at a glance. Priority 4 stays vanilla grey by default.
+
+Makes Priority 2 ("1") the new default, while Priority 1 ("A") is reserved for extreme/urgent cases only. Perfect if you want this priority behavior without having to relearn a new control scheme.
 
 [h3]What it does[/h3]
 [list][*]Recolors the manual work priority numbers: 1 = cyan, 2 = green, 3 = light yellow - the vanilla ladder shifted one tier down, so the top tier no longer looks like every other green checkbox in the game. Priority 4 stays grey by default.
