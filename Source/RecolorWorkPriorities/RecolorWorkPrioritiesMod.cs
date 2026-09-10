@@ -138,7 +138,7 @@ namespace RecolorWorkPriorities
         {
             WarningSkillThreshold = Mathf.Clamp(Settings?.warningSkillThreshold ?? 3f, 0f, 20f);
             string label = Settings?.topLabel;
-            TopLabel = string.IsNullOrEmpty(label) ? "A" : label;
+            TopLabel = string.IsNullOrEmpty(label) ? "A" : label.Trim();
         }
 
         /// <summary>The glyph drawn for a priority: with label shifting on,
@@ -164,10 +164,12 @@ namespace RecolorWorkPriorities
 
         /// <summary>Tooltip text for a priority, using the same shifted
         /// glyphs as the cells ("Priority A" ... "Priority 3"); with label
-        /// shifting off this resolves to the vanilla wording.</summary>
-        public static TaggedString PriorityTip(int priority)
+        /// shifting off this resolves to the vanilla wording. Returns a
+        /// plain string because the transpiler splices this call in place of
+        /// a block whose result was already cast back to string.</summary>
+        public static string PriorityTip(int priority)
         {
-            return "RecolorWorkPriorities.PriorityTip".Translate(DisplayLabelOf(priority));
+            return (string)"RecolorWorkPriorities.PriorityTip".Translate(DisplayLabelOf(priority));
         }
 
         private static void PatchSafe(Harmony harmony, Type patchClass)

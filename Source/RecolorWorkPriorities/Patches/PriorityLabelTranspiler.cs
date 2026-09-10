@@ -17,7 +17,7 @@ namespace RecolorWorkPriorities
     /// glyphs, so hovering an "A" box says "Priority A", not "Priority 1".
     ///
     /// Failed shape matching degrades to vanilla numbers plus a warning, the
-    /// same contract as the warning-threshold transpilers.</summary>
+    /// same contract as every other patch in this mod.</summary>
     internal static class PriorityLabelTranspiler
     {
         internal static IEnumerable<CodeInstruction> ReplaceToStringWithLabel(
@@ -49,10 +49,13 @@ namespace RecolorWorkPriorities
 
         /// <summary>Matches the compiler-generated shape of
         /// ("Priority" + priority).Translate(): string constant, int load,
-        /// box, Concat, implicit string-to-TaggedString cast, Translate.
-        /// The int load survives; everything around it is folded into one
-        /// call to PriorityTip(int), which resolves the same shifted labels
-        /// the cells draw.</summary>
+        /// box, Concat, then the Translate call and the (string) cast to
+        /// TaggedString - Translate is an extension on string, so it binds
+        /// directly on the Concat result and the cast follows; both orders
+        /// are accepted in case a future compiler binds differently. The int
+        /// load survives; everything around it is folded into one call to
+        /// PriorityTip(int), which returns a plain string and resolves the
+        /// same shifted labels the cells draw.</summary>
         internal static IEnumerable<CodeInstruction> ReplaceTipPriorityBlock(
             IEnumerable<CodeInstruction> instructions, string targetName)
         {
@@ -66,8 +69,8 @@ namespace RecolorWorkPriorities
                     && prefix == "Priority"
                     && codes[i + 2].opcode == OpCodes.Box
                     && IsNamedCall(codes[i + 3], "Concat")
-                    && IsNamedCall(codes[i + 4], "op_Implicit")
-                    && IsNamedCall(codes[i + 5], "Translate"))
+                    && ((IsNamedCall(codes[i + 4], "Translate") && IsNamedCall(codes[i + 5], "op_Implicit"))
+                        || (IsNamedCall(codes[i + 4], "op_Implicit") && IsNamedCall(codes[i + 5], "Translate"))))
                 {
                     CodeInstruction loadPriority = codes[i + 1];
                     loadPriority.blocks.AddRange(codes[i].blocks);

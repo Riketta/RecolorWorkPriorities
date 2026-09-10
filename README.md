@@ -88,9 +88,10 @@ priority tooltip matches ("Priority A", "Priority 1", ...).
 ## Technical notes
 
 For modders and the curious - every patch is a plain Harmony prefix/postfix
-with graceful degradation, except one targeted IL edit (the drawn number
-swap) that has no postfix equivalent which would not double the per-cell
-drawing cost or copy vanilla rendering. If a game update renames a target,
+with graceful degradation, except two small IL edits (the drawn number swap
+and the tooltip label block) that have no postfix equivalent which would not
+double the per-cell drawing cost, copy vanilla rendering, or do fragile
+string surgery on localized rich text. If a game update renames a target,
 that one behavior stays vanilla and a warning is logged, never a cascade of
 errors.
 
@@ -113,9 +114,10 @@ errors.
 - `WidgetsWork.TipForPawnWorker(Pawn, WorkTypeDef, bool)` - one transpiler
   rewrites the `("Priority" + n).Translate()` block so tooltips use the same
   shifted glyphs as the cells in every language; the block shape (constant,
-  int load, box, Concat, cast, Translate) is validated and falls back to
-  vanilla text on mismatch. Warning lines are left vanilla - they keep the
-  tier-2 color convention.
+  int load, box, Concat, Translate, string cast) is validated and falls back
+  to vanilla text on mismatch. A postfix appends the same "very bad skill"
+  warning line vanilla adds - for the 2..threshold band the border extension
+  covers - with the same key and the same tier-2 color convention.
 - `WorkTab.DrawUtilities` (Fluffy's, conditional) - postfix on its private
   `ColorOfPriority` shifts tiers 1-3 using a replica of its gradient, and
   applies the fourth color once it is customized; its `maxPriority` setting
