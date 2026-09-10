@@ -23,7 +23,10 @@ ladder changes:
 | inactive | grey | grey (unchanged) |
 
 All four colors are configurable, so the ladder can be tuned to any scheme -
-the vanilla-to-cyan shift is just the default.
+the vanilla-to-cyan shift is just the default. In practice the shift is aimed
+at colonies that treat priority 2 as the everyday default and reserve tier 1
+for extreme urgencies: the everyday crowd keeps the familiar green the old
+top tier wore, so there is nothing to re-learn.
 
 ## The warning border
 

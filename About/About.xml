@@ -7,7 +7,7 @@
   <supportedVersions>
     <li>1.6</li>
   </supportedVersions>
-  <description>Shifts the work tab's manual priority colors one tier up: priority 2 wears priority 1's green, priority 3 wears priority 2's yellow, and top priority gets a new cyan that stands out from both at a glance. All four colors are configurable in mod settings; priority 4 defaults to its vanilla grey so the lowest tier is unchanged.
+  <description>Shifts the work tab's manual priority colors one tier up: priority 2 wears priority 1's green, priority 3 wears priority 2's yellow, and top priority gets a new cyan that stands out from both at a glance. All four colors are configurable in mod settings; priority 4 defaults to its vanilla grey so the lowest tier is unchanged. In practice this suits colonies that treat priority 2 as the everyday default and keep tier 1 for genuinely extreme jobs: everyday work keeps the familiar green of the old top tier, so nothing has to be re-learned.
 
 The low-skill warning border moves one tier up as well: work boxes of active work the pawn is bad at are highlighted from skill 3 and below (vanilla highlights only 2 and below). The threshold is configurable and the priority tooltips follow both the threshold and the shifted labels.
 

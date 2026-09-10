@@ -9,6 +9,8 @@ a new cyan. The low-skill warning border appears from skill 3 and below
 
 - Recolors manual work priority numbers: 1 cyan, 2 green, 3 light yellow,
   4 grey by default - all four colors configurable in mod settings.
+  Aimed at players who keep tier 2 as the everyday default and tier 1 for
+  extreme urgencies - the familiar green look stays, nothing to re-learn.
 - Relabels the drawn priorities to A / 1 / 2 / 3 (top tier letter is
   customizable); real priority values stay 1-4 underneath.
 - Moves the low-skill warning border (and its tooltip warning) one tier up,
