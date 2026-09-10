@@ -38,6 +38,22 @@ behavior. The tooltip warning follows the border's threshold, and its text
 keeps the yellow look it had before the color shift (it reads the color one
 tier up from the shifted ladder).
 
+## Priority labels
+
+While **Shift priority labels** is on, the drawn numbers follow the shifted
+ladder: work boxes read **A / 1 / 2 / 3** instead of 1 / 2 / 3 / 4, and the
+priority tooltip matches ("Priority A", "Priority 1", ...).
+
+- The top tier shows a letter label - default **"A"**, as in afterburner
+  (the scheme reads like gears: A is one step above 1st). It is a setting,
+  so any 1-2 character label works ("!" also reads nicely, but visually
+  collides with the low-skill warning border).
+- Only the glyphs change: the real priority values stay 0-4 underneath, so
+  saves, job assignment, shift click-cycling, copy/paste and other mods all
+  keep seeing vanilla priorities.
+- Fluffy's Work Tab cells are relabelled too; its tooltips spell priorities
+  out in words ("Top", "High", ...) which stay as-is.
+
 ## Mod settings
 
 - **Enabled** - master switch. While off, the work tab keeps its vanilla
@@ -47,6 +63,9 @@ tier up from the shifted ladder).
   4 defaults to vanilla grey, so the lowest tier is unchanged unless you pick
   a color.
 - **Reset colors to defaults** - back to cyan / green / yellow / grey.
+- **Shift priority labels** - draws A / 1 / 2 / 3 instead of 1 / 2 / 3 / 4.
+- **Top tier label** - the letter shown on priority 1 boxes (default "A",
+  up to 2 characters, empty falls back to "A").
 - **Low-skill warning border** - the skill threshold described above.
 - **Debug logging** - Off / Basic (loading, applied patches, transpiler
   outcomes) / Verbose (Work Tab compat details, reference counts).
@@ -84,13 +103,21 @@ stays vanilla and a warning is logged, never a cascade of errors.
   static field, so slider changes apply live. Fluffy's Work Tab invokes this
   method via reflection, which is why one transpiler covers both tabs. A
   match count of anything but exactly 1 aborts the edit and logs.
+- `WidgetsWork.DrawWorkBoxFor` - transpiler replaces the drawn priority's
+  `ToStringCached` call with `DisplayLabelOf`, so cells read TopLabel / 1 /
+  2 / 3 while real values stay 0-4. The call is allocation-free (literals or
+  vanilla's cached ints); the top label is read from a static mirror synced
+  by `SyncStatics`, never re-trimmed per cell.
 - `WidgetsWork.TipForPawnWorker(Pawn, WorkTypeDef, bool)` - same threshold
   edit, plus bumping the constant `2` passed to `ColorOfPriority` for the two
-  warning lines up to `3`, keeping their pre-shift color.
+  warning lines up to `3`, keeping their pre-shift color, plus rewriting the
+  `("Priority" + n).Translate()` block into `PriorityTip(n)` so tooltips use
+  the same shifted glyphs as the cells.
 - `WorkTab.DrawUtilities` (Fluffy's, conditional) - postfix on its private
   `ColorOfPriority` shifts tiers 1-3 using a replica of its gradient, and
   applies the fourth color once it is customized; its `maxPriority` setting
-  is read via reflection once per frame (not per cell). Its work type tooltip
+  is read via reflection once per frame (not per cell). Its cells are
+  relabelled through its `DrawPriority`; its work type tooltip
   gets the same two transpilers. Missing internals at patch time or runtime
   degrade to "Work Tab stays unpatched".
 - Settings live in `RecolorWorkPrioritiesSettings`; the threshold is mirrored

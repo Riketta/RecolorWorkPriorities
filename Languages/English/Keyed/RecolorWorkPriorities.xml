@@ -20,11 +20,19 @@
   <RecolorWorkPriorities.ResetColors>Reset colors to defaults</RecolorWorkPriorities.ResetColors>
   <RecolorWorkPriorities.ResetColors.Tip>Priority 1 cyan, priority 2 vanilla-green, priority 3 vanilla-yellow, priority 4 vanilla-grey.</RecolorWorkPriorities.ResetColors.Tip>
 
+  <RecolorWorkPriorities.ShiftLabels>Shift priority labels</RecolorWorkPriorities.ShiftLabels>
+  <RecolorWorkPriorities.ShiftLabels.Tip>Draws priorities as A / 1 / 2 / 3 instead of 1 / 2 / 3 / 4: the top tier shows the top label below instead of a number, every other tier is relabelled one step down, matching the shifted colors. Tooltips follow. The real priority values stay 1-4 underneath - saves, job logic, shift-click cycling and other mods are unaffected.</RecolorWorkPriorities.ShiftLabels.Tip>
+
+  <RecolorWorkPriorities.TopLabel>Top tier label</RecolorWorkPriorities.TopLabel>
+  <RecolorWorkPriorities.TopLabel.Tip>The label shown on top-priority work boxes while labels are shifted. Default "A" (afterburner) - up to 2 characters fit the work box; leave empty to fall back to "A". Applies to tooltips as well.</RecolorWorkPriorities.TopLabel.Tip>
+
+  <RecolorWorkPriorities.PriorityTip>Priority {0}</RecolorWorkPriorities.PriorityTip>
+
   <RecolorWorkPriorities.WarningThreshold>Low-skill warning border: skill {0} and below</RecolorWorkPriorities.WarningThreshold>
   <RecolorWorkPriorities.WarningThreshold.Tip>Work boxes for active work the pawn is bad at get a warning border and a tooltip warning. Vanilla shows them at skill 2 and below; this default of 3 moves the border one tier up. Set it back to 2 for vanilla behavior, or to 0 to warn only on skill 0. Applies immediately.</RecolorWorkPriorities.WarningThreshold.Tip>
 
   <RecolorWorkPriorities.DebugLevel>Debug logging: {0}</RecolorWorkPriorities.DebugLevel>
   <RecolorWorkPriorities.DebugLevel.Tip>Cycles Off / Basic / Verbose.\n\nBasic logs mod loading, every applied patch and transpiler outcome. Verbose additionally logs Work Tab compatibility details like per-frame max-priority reads and warning color reference counts.</RecolorWorkPriorities.DebugLevel.Tip>
 
-  <RecolorWorkPriorities.BehaviorNote>Priority colors are shifted one tier up (2 wears 1's color, 3 wears 2's, 1 is cyan; 4 stays vanilla grey by default) in the vanilla work tab and in Fluffy's Work Tab when present. The low-skill warning border follows the configured skill threshold in both tabs. If the game or Work Tab changes, the affected piece stays vanilla instead of erroring.</RecolorWorkPriorities.BehaviorNote>
+  <RecolorWorkPriorities.BehaviorNote>Priority colors are shifted one tier up (2 wears 1's color, 3 wears 2's, 1 is cyan; 4 stays vanilla grey by default) and the drawn labels shift with them (A / 1 / 2 / 3), in the vanilla work tab and in Fluffy's Work Tab when present. The low-skill warning border follows the configured skill threshold in both tabs. If the game or Work Tab changes, the affected piece stays vanilla instead of erroring.</RecolorWorkPriorities.BehaviorNote>
 </LanguageData>

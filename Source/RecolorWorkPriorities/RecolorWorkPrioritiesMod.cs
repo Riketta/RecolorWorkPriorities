@@ -37,6 +37,17 @@ namespace RecolorWorkPriorities
         /// player picks a custom color.</summary>
         public Color priority4Color = RecolorWorkPrioritiesMod.VanillaPriority4;
 
+        /// <summary>Relabels drawn priorities: 2 shows as 1, 3 as 2, 4 as 3,
+        /// and the top tier shows topLabel instead of a number. The real
+        /// values 0-4 stay untouched underneath - saves, job logic and other
+        /// mods keep seeing vanilla priorities.</summary>
+        public bool shiftLabels = true;
+
+        /// <summary>Label shown for top-priority (1) work boxes while labels
+        /// are shifted. Default "A" (afterburner). Kept to 2 characters so
+        /// it fits the work box; empty falls back to "A" in display.</summary>
+        public string topLabel = "A";
+
         /// <summary>Skill below which the low-skill warning border (and the
         /// matching tooltip line) is shown for active work. Vanilla compares
         /// against 2; the default 3 moves the border one tier up.</summary>
@@ -53,6 +64,8 @@ namespace RecolorWorkPriorities
             Scribe_Values.Look(ref priority3Color, "priority3Color", new Color(1f, 0.9f, 0.5f));
             Scribe_Values.Look(ref priority4Color, "priority4Color", RecolorWorkPrioritiesMod.VanillaPriority4);
             Scribe_Values.Look(ref warningSkillThreshold, "warningSkillThreshold", 3f);
+            Scribe_Values.Look(ref shiftLabels, "shiftLabels", true);
+            Scribe_Values.Look(ref topLabel, "topLabel", "A");
             Scribe_Values.Look(ref debugLevel, "debugLevel", (int)DebugLogLevel.Off);
         }
     }
@@ -73,6 +86,12 @@ namespace RecolorWorkPriorities
         /// slider changes apply to the work tab immediately, without a
         /// restart. Kept clamped to sane skill values.</summary>
         public static float WarningSkillThreshold = 3f;
+
+        /// <summary>Live mirror of Settings.topLabel for the transpiled cell
+        /// drawing: DisplayLabelOf reads this cached, sanitized string instead
+        /// of trimming settings text on every drawn box. Updated by
+        /// SyncStatics; never empty (falls back to "A").</summary>
+        public static string TopLabel = "A";
 
         /// <summary>Vanilla 1.6 priority colors, kept for the settings reset
         /// button and as the documented source of the shifted defaults.</summary>
@@ -97,13 +116,17 @@ namespace RecolorWorkPriorities
             Harmony harmony = new Harmony(PackageId);
             PatchSafe(harmony, typeof(Patch_WidgetsWork_ColorOfPriority));
             PatchSafe(harmony, typeof(Patch_WidgetsWork_DrawWorkBoxBackground));
+            PatchSafe(harmony, typeof(Patch_WidgetsWork_DrawWorkBoxFor));
             PatchSafe(harmony, typeof(Patch_WidgetsWork_TipForPawnWorker));
             Patch_WorkTab_DrawUtilities.TryApply(harmony);
             DebugLog.Message("loaded (enabled=" + (Settings.enabled ? "true" : "false")
                 + ", p1=" + Settings.priority1Color
                 + ", p2=" + Settings.priority2Color
                 + ", p3=" + Settings.priority3Color
+                + ", p4=" + Settings.priority4Color
                 + ", warningSkillThreshold=" + Settings.warningSkillThreshold
+                + ", shiftLabels=" + (Settings.shiftLabels ? "true" : "false")
+                + ", topLabel=" + Settings.topLabel
                 + ", debugLevel=" + (DebugLogLevel)Settings.debugLevel + ").");
         }
 
@@ -113,6 +136,37 @@ namespace RecolorWorkPriorities
         public static void SyncStatics()
         {
             WarningSkillThreshold = Mathf.Clamp(Settings?.warningSkillThreshold ?? 3f, 0f, 20f);
+            string label = Settings?.topLabel;
+            TopLabel = string.IsNullOrEmpty(label) ? "A" : label;
+        }
+
+        /// <summary>The glyph drawn for a priority: with label shifting on,
+        /// the ladder reads TopLabel / 1 / 2 / 3 instead of 1 / 2 / 3 / 4.
+        /// Returns literals or vanilla's cached ints - allocation-free for
+        /// the per-cell drawing hot path.</summary>
+        public static string DisplayLabelOf(int priority)
+        {
+            RecolorWorkPrioritiesSettings settings = Settings;
+            if (settings == null || !settings.shiftLabels)
+            {
+                return priority.ToStringCached();
+            }
+            switch (priority)
+            {
+                case 1: return TopLabel;
+                case 2: return "1";
+                case 3: return "2";
+                case 4: return "3";
+                default: return priority.ToStringCached();
+            }
+        }
+
+        /// <summary>Tooltip text for a priority, using the same shifted
+        /// glyphs as the cells ("Priority A" ... "Priority 3"); with label
+        /// shifting off this resolves to the vanilla wording.</summary>
+        public static TaggedString PriorityTip(int priority)
+        {
+            return "RecolorWorkPriorities.PriorityTip".Translate(DisplayLabelOf(priority));
         }
 
         private static void PatchSafe(Harmony harmony, Type patchClass)
@@ -126,6 +180,16 @@ namespace RecolorWorkPriorities
             {
                 Log.Error("[RecolorWorkPriorities] Patch " + patchClass.Name + " could not be applied (game update?). " + e.Message);
             }
+        }
+
+        /// <summary>Clamps the top-tier label to what fits a work box:
+        /// trimmed and at most 2 characters. Empty stays empty in the text
+        /// field (mid-typing is not fought with); display falls back to
+        /// "A" in SyncStatics.</summary>
+        private static string TruncateTopLabel(string value)
+        {
+            value = value?.Trim() ?? string.Empty;
+            return value.Length <= 2 ? value : value.Substring(0, 2);
         }
 
         public override string SettingsCategory()
@@ -165,6 +229,19 @@ namespace RecolorWorkPriorities
                 Settings.priority4Color = VanillaPriority4;
             }
             TooltipHandler.TipRegion(resetRect, "RecolorWorkPriorities.ResetColors.Tip".Translate());
+            list.Gap(8f);
+
+            list.CheckboxLabeled("RecolorWorkPriorities.ShiftLabels".Translate(), ref Settings.shiftLabels,
+                "RecolorWorkPriorities.ShiftLabels.Tip".Translate());
+            list.Gap(4f);
+
+            Rect topLabelRect = list.GetRect(Text.LineHeight);
+            string topLabelInput = Widgets.TextEntryLabeled(topLabelRect,
+                "RecolorWorkPriorities.TopLabel".Translate(), Settings.topLabel);
+            TooltipHandler.TipRegion(topLabelRect, "RecolorWorkPriorities.TopLabel.Tip".Translate());
+            list.Gap(list.verticalSpacing);
+            Settings.topLabel = TruncateTopLabel(topLabelInput);
+            SyncStatics();
             list.Gap(8f);
 
             float threshold = Settings.warningSkillThreshold;

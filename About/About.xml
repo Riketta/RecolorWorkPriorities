@@ -11,6 +11,8 @@
 
 The low-skill warning border moves one tier up as well: work boxes of active work the pawn is bad at are highlighted from skill 3 and below (vanilla highlights only 2 and below). The threshold is configurable and the priority tooltips follow both the threshold and the shifted colors, so warnings keep their look.
 
+The drawn numbers shift with the colors: work boxes read A / 1 / 2 / 3 instead of 1 / 2 / 3 / 4, with a customizable letter on the top tier (default "A" for afterburner). Only the glyphs change - the real priority values stay 1-4 underneath for saves, job logic and other mods.
+
 Works with the vanilla work tab and with Fluffy's Work Tab - when that mod is detected, its detailed priority colors are shifted the same way and its warning border follows the same threshold. Everything degrades gracefully: if a game or Work Tab update moves something, the affected piece simply stays vanilla instead of erroring.
 
 Requires the Harmony mod. Nothing is hardcoded to specific work types, and the mod is safe to add or remove at any time.

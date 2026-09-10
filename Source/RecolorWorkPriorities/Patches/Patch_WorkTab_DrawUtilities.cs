@@ -49,6 +49,7 @@ namespace RecolorWorkPriorities
                 colorOfPriorityMethod = AccessTools.DeclaredMethod(drawUtilities, "ColorOfPriority", new[] { typeof(int) });
                 MethodInfo tipForWorkType = AccessTools.DeclaredMethod(drawUtilities, "TipForPawnWorker",
                     new[] { typeof(Pawn), typeof(WorkTypeDef), typeof(bool) });
+                MethodInfo drawPriority = AccessTools.DeclaredMethod(drawUtilities, "DrawPriority");
                 maxPriorityField = AccessTools.Field(AccessTools.TypeByName(SettingsTypeName), "maxPriority");
                 if (colorOfPriorityMethod == null || tipForWorkType == null || maxPriorityField == null)
                 {
@@ -61,6 +62,16 @@ namespace RecolorWorkPriorities
                 harmony.Patch(tipForWorkType,
                     transpiler: new HarmonyMethod(typeof(Patch_WorkTab_DrawUtilities), nameof(WorkTypeTipTranspiler)));
                 DebugLog.Message("Fluffy's Work Tab detected - shifted its priority colors and warning threshold as well.");
+                if (drawPriority != null)
+                {
+                    harmony.Patch(drawPriority,
+                        transpiler: new HarmonyMethod(typeof(Patch_WorkTab_DrawUtilities), nameof(DrawPriorityTranspiler)));
+                    DebugLog.Message("Work Tab priority numbers relabelled to the shifted ladder.");
+                }
+                else
+                {
+                    DebugLog.Warning("Work Tab's DrawPriority is missing (update?) - its cells keep vanilla numbers.");
+                }
             }
             catch (Exception e)
             {
@@ -74,6 +85,16 @@ namespace RecolorWorkPriorities
                 instructions, "WorkTab.DrawUtilities.TipForPawnWorker");
             return WarningThresholdTranspiler.BumpColorOfPriorityTwoToThree(
                 instructions, colorOfPriorityMethod, "WorkTab.DrawUtilities.TipForPawnWorker");
+        }
+
+        /// <summary>Work Tab's tooltips spell priorities out in words ("Top",
+        /// "High", ...), but its cells draw raw numbers through
+        /// DrawPriority - rerouting that through DisplayLabelOf keeps its
+        /// detailed columns on the shifted ladder too.</summary>
+        private static IEnumerable<CodeInstruction> DrawPriorityTranspiler(IEnumerable<CodeInstruction> instructions)
+        {
+            return PriorityLabelTranspiler.ReplaceToStringWithLabel(
+                instructions, "WorkTab.DrawUtilities.DrawPriority");
         }
 
         private static void ColorOfPriorityPostfix(int priority, ref Color __result)

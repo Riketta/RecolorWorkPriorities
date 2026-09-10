@@ -11,11 +11,12 @@ Moves the work tab's priority color ladder one tier up: priority 2 wears priorit
 [h3]What it does[/h3]
 [list][*]Recolors the manual work priority numbers: 1 = cyan, 2 = green, 3 = light yellow - the vanilla ladder shifted one tier down, so the top tier no longer looks like every other green checkbox in the game. Priority 4 stays grey by default.
 [*]All four priority colors are configurable in mod settings, with a full color picker and a one-click reset to the default scheme.
-[*]Moves the low-skill warning border one tier up too: work boxes of active work at skill 3 and below are highlighted (vanilla: 2 and below). The threshold is a slider; the tooltip warning follows it, and warning text keeps its familiar yellow.
+[*]Relabels the numbers to match: 2 reads as 1, 3 as 2, 4 as 3, and the top tier shows a customizable letter (default "A" for afterburner) - tooltips follow. Only the glyphs change: the real priorities stay 1-4 underneath, so saves and other mods are unaffected.
+[*]Moves the low-skill warning border one tier up too: work boxes of active work at skill 3 and below are highlighted (vanilla: 2 and below). The threshold is a slider; the tooltip warning follows it, and warning text keeps its familiar yellow.[/list]
 [*]Works with the vanilla work tab and with Fluffy's Work Tab - when present, its detailed priority colors are shifted the same way and its warning border follows the same threshold.[/list]
 
 [h3]Settings[/h3]
-Master switch, four configurable priority colors (with vanilla presets in the picker), the low-skill warning threshold, and debug logging (Off / Basic / Verbose).
+Master switch, four configurable priority colors (with vanilla presets in the picker), shifted priority labels with a customizable top-tier letter, the low-skill warning threshold, and debug logging (Off / Basic / Verbose).
 
 [h3]Compatibility[/h3]
 Requires RimWorld 1.6 and the [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2009463077]Harmony[/url] mod. All DLCs are optional.
